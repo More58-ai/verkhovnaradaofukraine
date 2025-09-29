@@ -1,231 +1,212 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Верховна Рада України - Офіційний вебпортал (Точна Імітація)</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-    <style>
-        :root {
-            --rada-blue: #1f4094;
-            --rada-yellow: #ffc107;
-            --text-color: #333;
-            --font-stack: 'Arial', 'Inter', sans-serif;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: var(--font-stack); background-color: #f7f7f7; }
-        .header-container, .nav-container, .content-wrapper { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
-        .rada-header { background-color: var(--rada-blue); padding: 15px 0; color: white; }
-        .header-container { display: flex; justify-content: space-between; align-items: flex-start; }
-        .logo-area { display: flex; align-items: center; position: relative; gap: 15px; }
-        .rada-logo-symbol { display: flex; align-items: center; height: 70px; }
-        .symbol-line-left { width: 6px; height: 100%; background-color: var(--rada-yellow); margin-right: 5px; }
-        .rada-logo-symbol img { height: 65px; width: auto; display: block; }
-        .rada-title-block { display: flex; flex-direction: column; line-height: 1.1; }
-        .rada-main-title { font-size: 40px; font-weight: 900; letter-spacing: 2px; }
-        .rada-subtitle { font-size: 16px; font-weight: 500; letter-spacing: 1px; }
-        .portal-description { font-size: 14px; margin-top: 5px; opacity: 0.9; }
-        .online-badge { position: absolute; top: 5px; left: 410px; background-color: var(--rada-yellow); color: var(--rada-blue); padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; line-height: 1; }
-        .top-links-area { text-align: right; display: flex; flex-direction: column; gap: 10px; padding-top: 5px; }
-        .top-link { color: white; text-decoration: none; font-size: 16px; display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
-        .top-link i { font-size: 18px; }
-        .dropdown { position: relative; display: inline-block; }
-        .language-dropdown { display: none; position: absolute; right: 0; background-color: white; min-width: 140px; box-shadow: 0 4px 8px rgba(0,0,0,0.15); border-radius: 4px; overflow: hidden; z-index: 999; padding: 0; margin: 0; list-style: none; }
-        .language-dropdown li a { display: block; padding: 8px 12px; text-decoration: none; color: var(--rada-blue); font-weight: 500; }
-        .language-dropdown li a:hover { background-color: var(--rada-blue); color: white; }
-        .dropdown:hover .language-dropdown { display: block; }
-        .btn.btn-primary { background-color: var(--rada-blue); border: none; color: white; font-size: 16px; padding: 6px 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; border-radius: 4px; }
-        .main-navigation { background-color: var(--rada-blue); border-top: 1px solid rgba(255, 255, 255, 0.2); padding: 15px 0; }
-        .nav-container { display: flex; justify-content: space-between; align-items: center; }
-        .main-nav-links a { color: white; text-decoration: none; font-size: 16px; padding: 0 18px; font-weight: 500; transition: background-color 0.2s; line-height: 1; }
-        .main-nav-links a:hover { text-decoration: underline; }
-        .social-links a { color: white; font-size: 16px; width: 30px; height: 30px; border: 1px solid white; border-radius: 50%; display: inline-flex; justify-content: center; align-items: center; margin-left: 10px; transition: background-color 0.2s; }
-        .social-links a:hover { background-color: rgba(255, 255, 255, 0.1); }
-        .content-wrapper { padding-top: 20px; }
-        .news-section { min-height: 300px; }
-        .news-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .news-title { font-size: 44px; font-weight: 800; color: var(--text-color); margin: 0; }
-        .bookmark-link { display: flex; align-items: center; color: var(--rada-blue); font-size: 14px; font-weight: 600; cursor: pointer; }
-        .bookmark-icon { font-size: 20px; margin-left: 8px; position: relative; top: 2px; }
-        .news-nav-bar { background-color: white; padding: 10px 0; border-top: 3px solid var(--rada-blue); display: flex; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .news-nav-bar a { color: var(--text-color); text-decoration: none; padding: 5px 15px; font-size: 14px; font-weight: 600; border-right: 1px solid #ddd; white-space: nowrap; }
-        .news-nav-bar a:last-child { border-right: none; }
-        .news-nav-bar a.active { color: var(--rada-blue); }
-        .gallery { display: flex; flex-direction: column; align-items: center; gap: 25px; padding: 20px; }
-        .gallery img { width: 90%; max-width: 1000px; border: 2px solid #ccc; border-radius: 12px; cursor: pointer; transition: transform 0.3s, border-color 0.3s; }
-        .gallery img:hover { transform: scale(1.03); border-color: var(--rada-blue); }
-        @media (max-width: 768px) { .gallery img { width: 100%; max-width: none; } }
-        .lightbox { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; }
-        .lightbox img { max-width: 90%; max-height: 90%; border-radius: 10px; }
-        .lightbox:target { display: flex; }
-        #page-frame { width: 100%; border: none; display: none; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Верховна Рада України - Офіційний вебпортал (Імітація)</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+:root {
+  --rada-blue: #1f4094;
+  --rada-yellow: #ffc107;
+  --text-color: #333;
+  --font-stack: 'Arial', 'Inter', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-stack); background-color: #f7f7f7; color: var(--text-color); }
+.header-container, .nav-container, .content-wrapper { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
+.rada-header { background-color: var(--rada-blue); padding: 15px 0; color: white; }
+.header-container { display: flex; justify-content: space-between; align-items: flex-start; }
+.logo-area { display: flex; align-items: center; position: relative; gap: 15px; }
+.rada-logo-symbol { display: flex; align-items: center; height: 70px; }
+.symbol-line-left { width: 6px; height: 100%; background-color: var(--rada-yellow); margin-right: 5px; }
+.rada-logo-symbol img { height: 65px; width: auto; display: block; }
+.rada-title-block { display: flex; flex-direction: column; line-height: 1.1; }
+.rada-main-title { font-size: 40px; font-weight: 900; letter-spacing: 2px; }
+.rada-subtitle { font-size: 16px; font-weight: 500; letter-spacing: 1px; }
+.portal-description { font-size: 14px; margin-top: 5px; opacity: 0.9; }
+.online-badge { position: absolute; top: 5px; left: 410px; background-color: var(--rada-yellow); color: var(--rada-blue); padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; line-height: 1; }
+.top-links-area { text-align: right; display: flex; flex-direction: column; gap: 10px; padding-top: 5px; }
+.top-link { color: white; text-decoration: none; font-size: 16px; display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+.top-link i { font-size: 18px; }
+.dropdown { position: relative; display: inline-block; }
+.language-dropdown { display: none; position: absolute; right: 0; background-color: white; min-width: 140px; box-shadow: 0 4px 8px rgba(0,0,0,0.15); border-radius: 4px; overflow: hidden; z-index: 999; padding: 0; margin: 0; list-style: none; }
+.language-dropdown li a { display: block; padding: 8px 12px; text-decoration: none; color: var(--rada-blue); font-weight: 500; }
+.language-dropdown li a:hover { background-color: var(--rada-blue); color: white; }
+.dropdown:hover .language-dropdown { display: block; }
+.btn.btn-primary { background-color: var(--rada-blue); border: none; color: white; font-size: 16px; padding: 6px 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; border-radius: 4px; }
+.main-navigation { background-color: var(--rada-blue); border-top: 1px solid rgba(255, 255, 255, 0.2); padding: 15px 0; }
+.nav-container { display: flex; justify-content: space-between; align-items: center; }
+.main-nav-links a { color: white; text-decoration: none; font-size: 16px; padding: 0 18px; font-weight: 500; transition: background-color 0.2s; line-height: 1; }
+.main-nav-links a:hover { text-decoration: underline; }
+.social-links a { color: white; font-size: 16px; width: 30px; height: 30px; border: 1px solid white; border-radius: 50%; display: inline-flex; justify-content: center; align-items: center; margin-left: 10px; transition: background-color 0.2s; }
+.social-links a:hover { background-color: rgba(255, 255, 255, 0.1); }
+.content-wrapper { padding-top: 20px; }
+.content-block { max-width: 1000px; margin: 40px auto; padding: 25px; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+.content-block h2 { text-align: center; color: var(--rada-blue); font-size: 28px; margin-bottom: 20px; text-shadow: 0 0 10px rgba(31,64,148,0.3); }
+.content-block p { font-size: 18px; line-height: 1.8; text-align: justify; }
+.highlight { background: linear-gradient(90deg, #ffc107, #ffd700); padding: 2px 6px; border-radius: 6px; font-weight: bold; }
+.gallery { display: flex; flex-direction: column; align-items: center; gap: 25px; padding: 20px; }
+.gallery img { width: 90%; max-width: 1000px; border: 2px solid #ccc; border-radius: 12px; cursor: pointer; transition: transform 0.3s, border-color 0.3s; }
+.gallery img:hover { transform: scale(1.03); border-color: var(--rada-blue); }
+.lightbox { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; }
+.lightbox img { max-width: 90%; max-height: 90%; border-radius: 10px; }
+.lightbox:target { display: flex; }
+#page-frame { width: 100%; border: none; display: none; }
+</style>
 </head>
 <body>
-    <header class="rada-header">
-        <div class="header-container">
-            <div class="logo-area">
-                <a href="#" id="logo-link" class="rada-logo-symbol">
-                    <span class="symbol-line-left"></span>
-                    <img src="https://i.postimg.cc/fTqvfKwH/removebg-preview.png" alt="Герб України">
-                </a>
-                <div class="rada-title-block">
-                    <a href="#" id="rada-title-link" style="color:white; text-decoration:none;">
-                        <span class="rada-main-title" data-lang-uk="РАДА" data-lang-en="RADA">РАДА</span>
-                    </a>
-                    <span class="rada-subtitle" data-lang-uk="ВЕРХОВНА РАДА УКРАЇНИ" data-lang-en="VERKHOVNA RADA OF UKRAINE">ВЕРХОВНА РАДА УКРАЇНИ</span>
-                    <span class="portal-description" data-lang-uk="Офіційний вебпортал парламенту України" data-lang-en="Official web portal of the Parliament of Ukraine">Офіційний вебпортал парламенту України</span>
-                </div>
-                <span class="online-badge">ONLINE</span>
-            </div>
-            <div class="top-links-area">
-                <a href="#" class="top-link gov-link"><i class="fa-solid fa-laptop-code"></i><span>GOV.UA</span></a>
-                <a href="#" class="top-link cabinet-link"><i class="fa-solid fa-user"></i><span>Електронний кабінет</span></a>
-                <div class="dropdown language-select">
-                  <button id="lang_menu_logo" class="btn btn-primary dropdown-toggle"><i class="fa fa-language"></i><span id="current-lang-btn">Українською</span></button>
-                  <ul class="language-dropdown">
-                    <li><a class="dropdown-item" href="#" onclick="switchLanguage('uk')">Українською</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="switchLanguage('en')">English</a></li>
-                  </ul>
-                </div>
-            </div>
-        </div>
-    </header>
 
-    <nav class="main-navigation">
-        <div class="nav-container">
-            <div class="main-nav-links">
-                <a href="#" id="sklad-link">Склад</a>
-                <a href="#" id="nakazy-vru-link">Накази ВРУ</a>
-                <a href="#" id="nakazy-prezydenta-link">Накази Президента</a>
-                <a href="#">Законодавство</a>
-                <a href="#">Громадськості</a>
-                <a href="#" id="press-link">Прес-центр</a>
-            </div>
-            <div class="social-links">
-                <a href="#" aria-label="Facebook"><i class="fa-brands fa-square-facebook"></i></a>
-                <a href="#" aria-label="Twitter"><i class="fa-brands fa-twitter"></i></a>
-                <a href="https://www.youtube.com/@moorechik_official" target="_blank" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
-                <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://discord.gg/5XVc4nPF" target="_blank" aria-label="Discord"><i class="fa-brands fa-discord"></i></a>
-            </div>
-        </div>
-    </nav>
-
-    <div class="content-wrapper">
-        <iframe id="page-frame"></iframe>
-        <div id="default-content">
-            <div class="news-section">
-                <div class="news-header-row">
-                    <h1 class="news-title">Новини</h1>
-                    <div class="bookmark-link"><span>Додайте нас у вибране</span><span class="bookmark-icon"><i class="fa-solid fa-bookmark"></i></span></div>
-                </div>
-                <nav class="news-nav-bar">
-                    <a href="#" class="active">Новини ПАРЛАМЕНТУ</a>
-                    <a href="#">Новини КОМІТЕТІВ</a>
-                    <a href="#">Для МЕДІА</a>
-                    <a href="#">ПАРЛАМЕНТСЬКІ ВИДАННЯ</a>
-                    <a href="#">Оголошення</a>
-                    <a href="#">Фотобанк</a>
-                    <a href="#">РAДА ОНЛАЙН</a>
-                </nav>
-            </div>
-        </div>
-
-        <!-- Галереї -->
-        <div id="gallery-content" style="display:none;">
-          <div class="gallery"><a href="#img1"><img src="https://i.postimg.cc/3RwfvQbX/1.png" alt="Наказ 1"></a></div>
-          <div id="img1" class="lightbox"><a href="#"><img src="https://i.postimg.cc/3RwfvQbX/1.png" alt="Наказ 1"></a></div>
-        </div>
-
-        <div id="gallery-prezydent" style="display:none;">
-          <div class="gallery"><a href="#pimg1"><img src="https://i.postimg.cc/6qFGhCWg/image.png" alt="Наказ Президента"></a></div>
-          <div id="pimg1" class="lightbox"><a href="#"><img src="https://i.postimg.cc/6qFGhCWg/image.png" alt="Наказ Президента"></a></div>
-        </div>
-
-        <div id="gallery-press" style="display:none;">
-          <div class="gallery"><a href="#press1"><img src="https://i.postimg.cc/HW292cXr/2025-09-28-223158.png" alt="Прес-центр"></a></div>
-          <div id="press1" class="lightbox"><a href="#"><img src="https://i.postimg.cc/HW292cXr/2025-09-28-223158.png" alt="Прес-центр"></a></div>
-        </div>
+<header class="rada-header">
+<div class="header-container">
+  <div class="logo-area">
+    <a href="#" id="logo-link" class="rada-logo-symbol">
+      <span class="symbol-line-left"></span>
+      <img src="https://i.postimg.cc/fTqvfKwH/removebg-preview.png" alt="Герб України">
+    </a>
+    <div class="rada-title-block">
+      <a href="#" id="rada-title-link" style="color:white; text-decoration:none;">
+        <span class="rada-main-title">РАДА</span>
+      </a>
+      <span class="rada-subtitle">ВЕРХОВНА РАДА УКРАЇНИ</span>
+      <span class="portal-description">Офіційний вебпортал парламенту України</span>
     </div>
+    <span class="online-badge">ONLINE</span>
+  </div>
+  <div class="top-links-area">
+    <a href="#" class="top-link gov-link"><i class="fa-solid fa-laptop-code"></i><span>GOV.UA</span></a>
+    <a href="#" class="top-link cabinet-link"><i class="fa-solid fa-user"></i><span>Електронний кабінет</span></a>
+    <div class="dropdown language-select">
+      <button id="lang_menu_logo" class="btn btn-primary dropdown-toggle"><i class="fa fa-language"></i><span id="current-lang-btn">Українською</span></button>
+      <ul class="language-dropdown">
+        <li><a class="dropdown-item" href="#" onclick="switchLanguage('uk')">Українською</a></li>
+        <li><a class="dropdown-item" href="#" onclick="switchLanguage('en')">English</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+</header>
 
-    <script>
-        function switchLanguage(lang) {
-            document.querySelectorAll('[data-lang-uk]').forEach(function(el) {
-                el.textContent = el.getAttribute('data-lang-' + lang);
-            });
-            document.getElementById('current-lang-btn').textContent = lang === 'uk' ? 'Українською' : 'English';
-        }
+<nav class="main-navigation">
+<div class="nav-container">
+  <div class="main-nav-links">
+    <a href="#" id="sklad-link">Склад</a>
+    <a href="#" id="nakazy-vru-link">Накази ВРУ</a>
+    <a href="#" id="nakazy-prezydenta-link">Накази Президента</a>
+    <a href="#" id="zakonodavstvo-link">Законодавство</a>
+    <a href="#" id="press-link">Прес-центр</a>
+  </div>
+  <div class="social-links">
+    <a href="#" aria-label="Facebook"><i class="fa-brands fa-square-facebook"></i></a>
+    <a href="#" aria-label="Twitter"><i class="fa-brands fa-twitter"></i></a>
+    <a href="https://www.youtube.com/@moorechik_official" target="_blank" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+    <a href="https://discord.gg/5XVc4nPF" target="_blank" aria-label="Discord"><i class="fa-brands fa-discord"></i></a>
+  </div>
+</div>
+</nav>
 
-        const skladLink = document.getElementById("sklad-link");
-        const nakazyVruLink = document.getElementById("nakazy-vru-link");
-        const nakazyPrezydentLink = document.getElementById("nakazy-prezydenta-link");
-        const pressLink = document.getElementById("press-link");
+<div class="content-wrapper">
+<iframe id="page-frame"></iframe>
 
-        const frame = document.getElementById("page-frame");
-        const defaultContent = document.getElementById("default-content");
-        const galleryContent = document.getElementById("gallery-content");
-        const galleryPrezydent = document.getElementById("gallery-prezydent");
-        const galleryPress = document.getElementById("gallery-press");
+<!-- Головна сторінка -->
+<div id="default-content">
+<div class="content-block">
+  <h2>Про Верховну Раду України</h2>
+  <p><span class="highlight">Верховна Рада України</span> — єдиний орган законодавчої влади в Україні. Вона здійснює <span class="highlight">представницькі</span>, <span class="highlight">законодавчі</span> та <span class="highlight">контрольні функції</span>, що є основою демократичного устрою держави.</p>
+  <p>Парламент ухвалює закони, які визначають життя суспільства та діяльність державних інституцій. Саме тут приймаються найважливіші рішення, що впливають на розвиток країни, права і свободи громадян.</p>
+  <p><span class="highlight">Прозорість</span>, <span class="highlight">відкритість</span> та <span class="highlight">відповідальність</span> Верховної Ради України є запорукою зміцнення правової держави та розвитку громадянського суспільства.</p>
+</div>
+</div>
 
-        function adjustFrameHeight() {
-            const header = document.querySelector('.rada-header');
-            const nav = document.querySelector('.main-navigation');
-            const headerH = header ? header.getBoundingClientRect().height : 0;
-            const navH = nav ? nav.getBoundingClientRect().height : 0;
-            const h = window.innerHeight - headerH - navH;
-            frame.style.height = (h > 300 ? h : 300) + 'px';
-        }
+<!-- Галереї -->
+<div id="gallery-content" style="display:none;">
+  <div class="gallery"><a href="#img1"><img src="https://i.postimg.cc/3RwfvQbX/1.png" alt="Наказ 1"></a></div>
+  <div id="img1" class="lightbox"><a href="#"><img src="https://i.postimg.cc/3RwfvQbX/1.png" alt="Наказ 1"></a></div>
+</div>
 
-        function loadContent(url) {
-            defaultContent.style.display = "none";
-            galleryContent.style.display = "none";
-            galleryPrezydent.style.display = "none";
-            galleryPress.style.display = "none";
-            frame.style.display = "block";
-            frame.src = url;
-            adjustFrameHeight();
-            setTimeout(adjustFrameHeight, 150);
-        }
+<div id="gallery-prezydent" style="display:none;">
+  <div class="gallery"><a href="#pimg1"><img src="https://i.postimg.cc/6qFGhCWg/image.png" alt="Наказ Президента"></a></div>
+  <div id="pimg1" class="lightbox"><a href="#"><img src="https://i.postimg.cc/6qFGhCWg/image.png" alt="Наказ Президента"></a></div>
+</div>
 
-        skladLink.addEventListener("click", function(e) {
-          e.preventDefault(); loadContent("https://more58-ai.github.io/verkhovnaradaofukraine/skad/");
-        });
-        nakazyVruLink.addEventListener("click", function(e) {
-          e.preventDefault(); frame.style.display="none"; defaultContent.style.display="none"; galleryPrezydent.style.display="none"; galleryPress.style.display="none"; galleryContent.style.display="block";
-        });
-        nakazyPrezydentLink.addEventListener("click", function(e) {
-          e.preventDefault(); frame.style.display="none"; defaultContent.style.display="none"; galleryContent.style.display="none"; galleryPress.style.display="none"; galleryPrezydent.style.display="block";
-        });
-        pressLink.addEventListener("click", function(e) {
-          e.preventDefault(); frame.style.display="none"; defaultContent.style.display="none"; galleryContent.style.display="none"; galleryPrezydent.style.display="none"; galleryPress.style.display="block";
-        });
+<div id="gallery-press" style="display:none;">
+  <div class="gallery"><a href="#press1"><img src="https://i.postimg.cc/HW292cXr/2025-09-28-223158.png" alt="Прес-центр"></a></div>
+  <div id="press1" class="lightbox"><a href="#"><img src="https://i.postimg.cc/HW292cXr/2025-09-28-223158.png" alt="Прес-центр"></a></div>
+</div>
+</div>
 
-        function showHome(e){
-          if(e) e.preventDefault();
-          frame.style.display = "none";
-          galleryContent.style.display = "none";
-          galleryPrezydent.style.display = "none";
-          galleryPress.style.display = "none";
-          defaultContent.style.display = "block";
-          try { frame.src = "about:blank"; } catch(_) {}
-        }
-        document.getElementById("logo-link").addEventListener("click", showHome);
-        document.getElementById("rada-title-link").addEventListener("click", showHome);
+<script>
+function switchLanguage(lang) {
+    document.querySelectorAll('[data-lang-uk]').forEach(function(el) {
+        el.textContent = el.getAttribute('data-lang-' + lang);
+    });
+    document.getElementById('current-lang-btn').textContent = lang === 'uk' ? 'Українською' : 'English';
+}
 
-        window.addEventListener('resize', function() {
-          if (frame.style.display === 'block') adjustFrameHeight();
-        });
+const skladLink = document.getElementById("sklad-link");
+const nakazyVruLink = document.getElementById("nakazy-vru-link");
+const nakazyPrezydentLink = document.getElementById("nakazy-prezydenta-link");
+const zakonodavstvoLink = document.getElementById("zakonodavstvo-link");
+const pressLink = document.getElementById("press-link");
 
-        frame.addEventListener("load", function() {
-          try {
-            const frameDoc = frame.contentDocument || frame.contentWindow.document;
-            if (frameDoc && frameDoc.body && frameDoc.body.scrollHeight) {
-                frame.style.height = frameDoc.body.scrollHeight + 'px';
-            } else { adjustFrameHeight(); }
-          } catch (e) { adjustFrameHeight(); }
-        });
-    </script>
+const frame = document.getElementById("page-frame");
+const defaultContent = document.getElementById("default-content");
+const galleryContent = document.getElementById("gallery-content");
+const galleryPrezydent = document.getElementById("gallery-prezydent");
+const galleryPress = document.getElementById("gallery-press");
+
+function adjustFrameHeight() {
+    const header = document.querySelector('.rada-header');
+    const nav = document.querySelector('.main-navigation');
+    const headerH = header ? header.getBoundingClientRect().height : 0;
+    const navH = nav ? nav.getBoundingClientRect().height : 0;
+    const h = window.innerHeight - headerH - navH;
+    frame.style.height = (h > 300 ? h : 300) + 'px';
+}
+
+function loadContent(url) {
+    defaultContent.style.display = "none";
+    galleryContent.style.display = "none";
+    galleryPrezydent.style.display = "none";
+    galleryPress.style.display = "none";
+    frame.style.display = "block";
+    frame.src = url;
+    adjustFrameHeight();
+    setTimeout(adjustFrameHeight, 150);
+}
+
+skladLink.addEventListener("click", function(e) { e.preventDefault(); loadContent("https://more58-ai.github.io/verkhovnaradaofukraine/skad/"); });
+nakazyVruLink.addEventListener("click", function(e) { e.preventDefault(); frame.style.display="none"; defaultContent.style.display="none"; galleryPrezydent.style.display="none"; galleryPress.style.display="none"; galleryContent.style.display="block"; });
+nakazyPrezydentLink.addEventListener("click", function(e) { e.preventDefault(); frame.style.display="none"; defaultContent.style.display="none"; galleryContent.style.display="none"; galleryPress.style.display="none"; galleryPrezydent.style.display="block"; });
+zakonodavstvoLink.addEventListener("click", function(e) { e.preventDefault(); loadContent("https://more58-ai.github.io/verkhovnaradaofukraine/kky/"); });
+pressLink.addEventListener("click", function(e) { e.preventDefault(); frame.style.display="none"; defaultContent.style.display="none"; galleryContent.style.display="none"; galleryPrezydent.style.display="none"; galleryPress.style.display="block"; });
+
+function showHome(e){
+  if(e) e.preventDefault();
+  frame.style.display = "none";
+  galleryContent.style.display = "none";
+  galleryPrezydent.style.display = "none";
+  galleryPress.style.display = "none";
+  defaultContent.style.display = "block";
+  try { frame.src = "about:blank"; } catch(_) {}
+}
+document.getElementById("logo-link").addEventListener("click", showHome);
+document.getElementById("rada-title-link").addEventListener("click", showHome);
+
+window.addEventListener('resize', function() {
+  if (frame.style.display === 'block') adjustFrameHeight();
+});
+
+frame.addEventListener("load", function() {
+  try {
+    const frameDoc = frame.contentDocument || frame.contentWindow.document;
+    if (frameDoc && frameDoc.body && frameDoc.body.scrollHeight) {
+        frame.style.height = frameDoc.body.scrollHeight + 'px';
+    } else { adjustFrameHeight(); }
+  } catch (e) { adjustFrameHeight(); }
+});
+</script>
+
 </body>
 </html>
