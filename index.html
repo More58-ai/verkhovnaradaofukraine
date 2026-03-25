@@ -351,8 +351,10 @@ footer {
 
 #page-frame {
   width: 100%;
+  min-height: 800px !important; /* Примусово тримаємо розмір */
   border: none;
   display: none;
+  background: white;
 }
 </style>
 </head>
@@ -391,7 +393,7 @@ footer {
 <nav class="main-navigation">
 <div class="nav-container">
   <div class="main-nav-links">
-    <a href="#" id="sklad-link">Склад</a>
+    <a href="https://more58-ai.github.io/verkhovnaradaofukraine/skad/" id="sklad-link">Склад</a>
     <a href="#" id="nakazy-vru-link">Накази ВРУ</a>
     <a href="#" id="nakazy-prezydenta-link">Накази Президента</a>
     
@@ -482,11 +484,9 @@ footer {
 const links = {
   sklad: document.getElementById("sklad-link"),
   vru: document.getElementById("nakazy-vru-link"),
-  prez: document.getElementById("nakazy-prezydenta-link"),
-  zakon: document.getElementById("zakonodavstvo-link"),
-  press: document.getElementById("press-link")
+  prez: document.getElementById("nakazy-prezydenta-link")
+  // Видалили zakon та press, бо їх немає в меню
 };
-
 const frame = document.getElementById("page-frame");
 const contents = {
   def: document.getElementById("default-content"),
@@ -497,14 +497,20 @@ const contents = {
 
 function hideAll() {
   frame.style.display = "none";
-  Object.values(contents).forEach(c => c.style.display = "none");
+  // Додаємо check (if c), щоб не було помилок з пустими розділами
+  Object.values(contents).forEach(c => {
+    if (c) c.style.display = "none";
+  });
 }
 
-links.sklad.onclick = (e) => { e.preventDefault(); hideAll(); frame.style.display = "block"; frame.src = "https://more58-ai.github.io/verkhovnaradaofukraine/skad/"; };
+
+  // Цей рядок каже: "Як тільки сторінка всередині завантажиться — підрівняй висоту"
+  frame.onload = adjustFrameHeight;
+
 links.vru.onclick = (e) => { e.preventDefault(); hideAll(); contents.vru.style.display = "block"; };
 links.prez.onclick = (e) => { e.preventDefault(); hideAll(); contents.prez.style.display = "block"; };
-links.zakon.onclick = (e) => { e.preventDefault(); hideAll(); frame.style.display = "block"; frame.src = "https://more58-ai.github.io/verkhovnaradaofukraine/kky/"; };
-links.press.onclick = (e) => { e.preventDefault(); hideAll(); contents.press.style.display = "block"; };
+
+
 
 document.getElementById("logo-link").onclick = (e) => { e.preventDefault(); hideAll(); contents.def.style.display = "block"; };
 document.getElementById("rada-title-link").onclick = (e) => { e.preventDefault(); hideAll(); contents.def.style.display = "block"; };
@@ -512,6 +518,20 @@ document.getElementById("rada-title-link").onclick = (e) => { e.preventDefault()
 function switchLanguage(lang) {
   document.getElementById('current-lang-btn').textContent = lang === 'uk' ? 'Українською' : 'English';
 }
+function adjustFrameHeight() {
+    const header = document.querySelector('.rada-header');
+    const nav = document.querySelector('.main-navigation');
+    const footer = document.querySelector('footer');
+    
+    const headerH = header ? header.offsetHeight : 0;
+    const navH = nav ? nav.offsetHeight : 0;
+    const footerH = footer ? footer.offsetHeight : 0;
+    
+    // Вираховуємо доступну висоту: екран мінус шапка, навігація та футер
+    const availableHeight = window.innerHeight - headerH - navH - footerH - 100;
+    frame.style.height = (availableHeight > 600 ? availableHeight : 600) + 'px';
+}
+window.addEventListener('resize', adjustFrameHeight);
 </script>
 
 </body>
